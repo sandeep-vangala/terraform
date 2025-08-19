@@ -66,7 +66,10 @@ terraform-project/
 ### Root Configuration Files
 These files reside at the root (`terraform-project/`) and orchestrate the modules with workspaces.
 
-<xaiArtifact artifact_id="89cfec27-2e9d-4aa8-af7d-13ef05dd240d" artifact_version_id="dc7c86fe-b8b8-421e-9d93-c10953d3bcd1" title="main.tf" contentType="text/hcl">
+**main.tf**
+
+
+```
 provider "aws" {
   region = var.region
 }
@@ -123,9 +126,11 @@ module "rds" {
   db_password         = var.db_password
   multi_az            = var.environment == "prod" ? true : false
 }
-</xaiArtifact>
+```
 
-<xaiArtifact artifact_id="25582eea-1013-482f-8bd0-654a34ecf548" artifact_version_id="acaba732-857b-4572-ada5-e786512a7e49" title="variables.tf" contentType="text/hcl">
+
+```
+**variables.tf**
 variable "region" {
   description = "AWS region"
   type        = string
@@ -213,9 +218,10 @@ variable "db_port" {
   description = "RDS database port"
   type        = number
 }
-</xaiArtifact>
+```
+**outputs.tf**
 
-<xaiArtifact artifact_id="d7d2b37a-fe66-4f87-8442-38fbcf5a7861" artifact_version_id="1adefd2d-167b-41c1-9663-2b228ef6ec3c" title="outputs.tf" contentType="text/hcl">
+```
 output "vpc_id" {
   description = "VPC ID"
   value       = module.vpc.vpc_id
@@ -235,9 +241,10 @@ output "rds_endpoint" {
   description = "RDS instance endpoint"
   value       = module.rds.db_endpoint
 }
-</xaiArtifact>
+```
 
-<xaiArtifact artifact_id="c623e9f1-5e15-4637-bdb9-621acc6cb50e" artifact_version_id="4877a2ae-3511-4202-bacc-c15d07c5ace5" title="backend.tf" contentType="text/hcl">
+**backend.tf**
+```
 terraform {
   backend "s3" {
     bucket         = "my-terraform-state"
@@ -246,9 +253,9 @@ terraform {
     dynamodb_table = "terraform-locks"
   }
 }
-</xaiArtifact>
-
-<xaiArtifact artifact_id="f35ef691-5f64-4227-b34c-e49f1678f30e" artifact_version_id="cb38a9dc-64ab-491b-aabf-e2ca6d9e74ba" title="versions.tf" contentType="text/hcl">
+```
+**versions.tf**
+```
 terraform {
   required_providers {
     aws = {
@@ -258,9 +265,9 @@ terraform {
   }
   required_version = ">= 1.0.0"
 }
-</xaiArtifact>
-
-<xaiArtifact artifact_id="77f3dd56-43e8-4a18-849c-5c1bb6c36168" artifact_version_id="e4c44ecf-ed7b-415c-9bbc-479c271e9eea" title="tfvars/dev.tfvars" contentType="text/hcl">
+```
+**tfvars/dev.tfvars**
+```
 region               = "us-east-1"
 environment         = "dev"
 cidr_block          = "10.0.0.0/16"
@@ -278,9 +285,9 @@ db_allocated_storage = 20
 db_username         = "devuser"
 db_password         = "devpassword" # Use SSM in prod
 db_port             = 5432
-</xaiArtifact>
-
-<xaiArtifact artifact_id="426a253b-4ef9-4f66-8525-4740d2fe9957" artifact_version_id="45b11f04-026e-4172-aa50-d15df41e2bc0" title="tfvars/prod.tfvars" contentType="text/hcl">
+```
+**tfvars/prod.tfvars**
+```
 region               = "us-east-1"
 environment         = "prod"
 cidr_block          = "10.2.0.0/16"
@@ -298,7 +305,7 @@ db_allocated_storage = 100
 db_username         = "produser"
 db_password         = "prodpassword" # Use SSM in prod
 db_port             = 5432
-</xaiArtifact>
+```
 
 ### Module Files
 Below are the contents of `main.tf`, `variables.tf`, and `outputs.tf` for each module (`vpc`, `eks`, `rds`, `iam`, `sg`). These are reusable across environments, with differences handled by variables.
@@ -306,7 +313,9 @@ Below are the contents of `main.tf`, `variables.tf`, and `outputs.tf` for each m
 #### 1. VPC Module (`modules/vpc/`)
 Creates a VPC, public/private subnets, internet gateway, and NAT gateway.
 
-<xaiArtifact artifact_id="84f0f8e0-018c-432c-a505-c26c9a8257d3" artifact_version_id="80c8449b-1213-434c-a5a2-88084de2040c" title="modules/vpc/main.tf" contentType="text/hcl">
+**modules/vpc/main.tf**
+
+```
 provider "aws" {
   region = var.region
 }
@@ -403,9 +412,10 @@ resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[0].id
 }
-</xaiArtifact>
+```
 
-<xaiArtifact artifact_id="d86730d4-38da-4c54-a740-253b72ff3910" artifact_version_id="2028d9b8-dfe1-453d-a646-2e30dfc5fae9" title="modules/vpc/variables.tf" contentType="text/hcl">
+**modules/vpc/variables.tf**
+```
 variable "region" {
   description = "AWS region"
   type        = string
@@ -435,9 +445,10 @@ variable "availability_zones" {
   description = "List of availability zones"
   type        = list(string)
 }
-</xaiArtifact>
+```
 
-<xaiArtifact artifact_id="9a976d79-2c75-4ebb-90ff-5e8c2db60942" artifact_version_id="90b3cc4a-b5c9-4d24-a70f-1674b4991608" title="modules/vpc/outputs.tf" contentType="text/hcl">
+**modules/vpc/outputs.tf**
+```
 output "vpc_id" {
   description = "ID of the VPC"
   value       = aws_vpc.main.id
@@ -452,12 +463,13 @@ output "private_subnet_ids" {
   description = "List of private subnet IDs"
   value       = aws_subnet.private[*].id
 }
-</xaiArtifact>
+```
 
 #### 2. EKS Module (`modules/eks/`)
 Creates an EKS cluster and node group, depending on VPC and IAM modules.
 
-<xaiArtifact artifact_id="591dd3a2-2cb1-484d-8e6a-215def23a98b" artifact_version_id="e37a1285-ce35-436f-ad0e-5189f941b63d" title="modules/eks/main.tf" contentType="text/hcl">
+**modules/eks/main.tf**
+```
 provider "aws" {
   region = var.region
 }
@@ -489,9 +501,9 @@ resource "aws_eks_node_group" "main" {
     Environment = var.environment
   }
 }
-</xaiArtifact>
-
-<xaiArtifact artifact_id="e60894a3-f7b9-44fa-b7f7-0b3f571dea82" artifact_version_id="56c93878-9859-4ebe-95d0-5d7157de22c3" title="modules/eks/variables.tf" contentType="text/hcl">
+```
+**modules/eks/varibales.tf**
+```
 variable "region" {
   description = "AWS region"
   type        = string
@@ -541,9 +553,10 @@ variable "node_min_size" {
   description = "Minimum number of nodes"
   type        = number
 }
-</xaiArtifact>
+```
+**modules/eks/outputs.tf**
 
-<xaiArtifact artifact_id="7ec76761-4a64-47f4-bc76-2692f97d1057" artifact_version_id="5d5dead4-3c00-47d4-84e3-eb26676825e8" title="modules/eks/outputs.tf" contentType="text/hcl">
+```
 output "cluster_endpoint" {
   description = "EKS cluster endpoint"
   value       = aws_eks_cluster.main.endpoint
@@ -553,12 +566,12 @@ output "cluster_name" {
   description = "EKS cluster name"
   value       = aws_eks_cluster.main.name
 }
-</xaiArtifact>
+```
 
 #### 3. RDS Module (`modules/rds/`)
 Creates an RDS instance in VPC private subnets.
-
-<xaiArtifact artifact_id="32890e82-e627-41f3-9053-2a2f5b01267f" artifact_version_id="e1d80208-7fdb-43c1-9e60-270831a7a7b9" title="modules/rds/main.tf" contentType="text/hcl">
+**modules/rds/main.tf**
+```
 provider "aws" {
   region = var.region
 }
@@ -587,9 +600,8 @@ resource "aws_db_instance" "main" {
     Environment = var.environment
   }
 }
-</xaiArtifact>
-
-<xaiArtifact artifact_id="c09dddd2-39c2-450f-a760-8a71b3462b8d" artifact_version_id="9f70e6a9-dc73-4ffe-bc76-33b503ca24a9" title="modules/rds/variables.tf" contentType="text/hcl">
+```
+**modules/rds/variables.tf**
 variable "region" {
   description = "AWS region"
   type        = string
@@ -647,9 +659,9 @@ variable "multi_az" {
   type        = bool
   default     = false
 }
-</xaiArtifact>
 
-<xaiArtifact artifact_id="4e66945f-b9e9-4889-9ab8-266f41f7e36a" artifact_version_id="64b16a61-d71c-4649-b269-2ea24e9c1922" title="modules/rds/outputs.tf" contentType="text/hcl">
+**modules/rds/outputs.tf**
+
 output "db_endpoint" {
   description = "RDS instance endpoint"
   value       = aws_db_instance.main.endpoint
@@ -659,12 +671,13 @@ output "db_arn" {
   description = "RDS instance ARN"
   value       = aws_db_instance.main.arn
 }
-</xaiArtifact>
+
 
 #### 4. IAM Module (`modules/iam/`)
 Creates IAM roles for EKS cluster and node group.
 
-<xaiArtifact artifact_id="c45a79cb-8c0d-40a5-a4e7-80456844f7e3" artifact_version_id="54ce607e-7346-4925-a312-8905ba65252c" title="modules/iam/main.tf" contentType="text/hcl">
+**modules/iam/main.tf**
+```
 provider "aws" {
   region = var.region
 }
@@ -715,9 +728,9 @@ resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
   role       = aws_iam_role.eks_node.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSCNIPolicy"
 }
-</xaiArtifact>
+```
+**modules/iam/variables.tf**
 
-<xaiArtifact artifact_id="481f7496-9d8e-4455-9bbc-18e08aa9332b" artifact_version_id="fce7e62f-0aa7-45f3-ac78-d3c1ff7bc056" title="modules/iam/variables.tf" contentType="text/hcl">
 variable "region" {
   description = "AWS region"
   type        = string
@@ -727,9 +740,9 @@ variable "environment" {
   description = "Environment name"
   type        = string
 }
-</xaiArtifact>
 
-<xaiArtifact artifact_id="5410072d-d6fe-40cc-86d5-b532307956ac" artifact_version_id="8b4153b7-ef29-4716-a71d-51d3ac209188" title="modules/iam/outputs.tf" contentType="text/hcl">
+**modules/iam/outputs.tf**
+
 output "cluster_role_arn" {
   description = "IAM role ARN for EKS cluster"
   value       = aws_iam_role.eks_cluster.arn
@@ -739,12 +752,14 @@ output "node_role_arn" {
   description = "IAM role ARN for EKS node group"
   value       = aws_iam_role.eks_node.arn
 }
-</xaiArtifact>
+
 
 #### 5. Security Group Module (`modules/sg/`)
 Creates security groups for EKS and RDS.
 
-<xaiArtifact artifact_id="c95daaf5-fd10-477d-a744-785fd16c51fd" artifact_version_id="dc253889-f625-42b2-b5b2-372cb4f58b99" title="modules/sg/main.tf" contentType="text/hcl">
+**modules/sg/main.tf**
+
+```
 provider "aws" {
   region = var.region
 }
@@ -782,9 +797,10 @@ resource "aws_security_group" "rds" {
     Environment = var.environment
   }
 }
-</xaiArtifact>
 
-<xaiArtifact artifact_id="fdf3550b-e419-45b4-b8cb-dda1810b2e2d" artifact_version_id="711cc774-4707-4c16-a735-134ced2655c6" title="modules/sg/variables.tf" contentType="text/hcl">
+```
+**modules/sg/varibales.tf**
+```
 variable "region" {
   description = "AWS region"
   type        = string
@@ -804,9 +820,10 @@ variable "db_port" {
   description = "Database port (e.g., 5432 for Postgres)"
   type        = number
 }
-</xaiArtifact>
+```
 
-<xaiArtifact artifact_id="1672c1ea-b081-4a6d-8f87-4d722158b2f9" artifact_version_id="bcbdda2d-5542-4d89-a8f4-2510801e0f76" title="modules/sg/outputs.tf" contentType="text/hcl">
+**modules/sg/outputs.tf**
+```
 output "eks_security_group_id" {
   description = "Security group ID for EKS"
   value       = aws_security_group.eks.id
@@ -816,7 +833,7 @@ output "rds_security_group_id" {
   description = "Security group ID for RDS"
   value       = aws_security_group.rds.id
 }
-</xaiArtifact>
+```
 
 ### Workflow with Workspaces
 1. **Initialize**: `terraform init`.
