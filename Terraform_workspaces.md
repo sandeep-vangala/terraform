@@ -602,6 +602,8 @@ resource "aws_db_instance" "main" {
 }
 ```
 **modules/rds/variables.tf**
+
+```
 variable "region" {
   description = "AWS region"
   type        = string
@@ -659,8 +661,9 @@ variable "multi_az" {
   type        = bool
   default     = false
 }
-
+```
 **modules/rds/outputs.tf**
+```
 
 output "db_endpoint" {
   description = "RDS instance endpoint"
@@ -672,7 +675,7 @@ output "db_arn" {
   value       = aws_db_instance.main.arn
 }
 
-
+```
 #### 4. IAM Module (`modules/iam/`)
 Creates IAM roles for EKS cluster and node group.
 
@@ -730,6 +733,7 @@ resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
 }
 ```
 **modules/iam/variables.tf**
+```
 
 variable "region" {
   description = "AWS region"
@@ -740,9 +744,9 @@ variable "environment" {
   description = "Environment name"
   type        = string
 }
-
+```
 **modules/iam/outputs.tf**
-
+```
 output "cluster_role_arn" {
   description = "IAM role ARN for EKS cluster"
   value       = aws_iam_role.eks_cluster.arn
@@ -753,7 +757,7 @@ output "node_role_arn" {
   value       = aws_iam_role.eks_node.arn
 }
 
-
+```
 #### 5. Security Group Module (`modules/sg/`)
 Creates security groups for EKS and RDS.
 
